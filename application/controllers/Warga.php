@@ -7,19 +7,44 @@ class Warga extends REST_Controller {
 
     function __construct($config = 'rest') {
         parent::__construct($config);
-        $this->load->database();
+        // $this->load->database();
     }
 
     //Menampilkan data kontak
     function index_get() {
         $id = $this->get('id');
         if ($id == '') {
-            $kontak = $this->db->get('warga')->result();
+            // $kontak = $this->db->get('warga')->result();
+            // $kontak = $this->db->query("select * from warga")->result();
+            $this->db->select('*');
+            $this->db->select('warga.id');
+            $this->db->from('warga');
+            $this->db->join('tbl_jenkel', 'warga.jenkel = tbl_jenkel.id','left');
+            $this->db->join('tbl_nikah', 'warga.statusnikah = tbl_nikah.id','left');
+            $this->db->join('tbl_agama', 'warga.agama = tbl_agama.id','left');
+            $this->db->join('tbl_wn', 'warga.warganegara = tbl_wn.id','left');
+            $this->db->join('tbl_klg', 'warga.statusklg = tbl_klg.id','left');
+            $this->db->join('tbl_blok', 'warga.alamatblok = tbl_blok.id','left');
+            $this->db->join('tbl_penghuni', 'warga.penghuni = tbl_penghuni.id','left');
+            // $this->db->where('warga.idk', $id);
+            $kontak = $this->db->get()->result();
         } else {
-            $this->db->where('id', $id);
-            $kontak = $this->db->get('warga')->result();
+            $this->db->select('*');
+            $this->db->select('warga.id');
+            $this->db->from('warga');
+            $this->db->join('tbl_jenkel', 'warga.jenkel = tbl_jenkel.id','left');
+            $this->db->join('tbl_nikah', 'warga.statusnikah = tbl_nikah.id','left');
+            $this->db->join('tbl_agama', 'warga.agama = tbl_agama.id','left');
+            $this->db->join('tbl_wn', 'warga.warganegara = tbl_wn.id','left');
+            $this->db->join('tbl_klg', 'warga.statusklg = tbl_klg.id','left');
+            $this->db->join('tbl_blok', 'warga.alamatblok = tbl_blok.id','left');
+            $this->db->join('tbl_penghuni', 'warga.penghuni = tbl_penghuni.id','left');
+            $this->db->where('warga.id', $id);
+            $kontak = $this->db->get()->result();
+            // $kontak = $this->db->get()->result();
         }
         $this->response(array('status'=>true,'result'=>$kontak), 200);
+        // $this->response($kontak, REST_Controller::HTTP_OK);
     }
 
     //Menigirm atau menambah data kontak baru
@@ -42,12 +67,17 @@ class Warga extends REST_Controller {
             'ket' => $this->input->post('ket'),
             'penghuni' => $this->input->post('penghuni'),
         );
-    	$insert = $this->db->insert('warga',$data);
-    	if ($insert) {
-    		$this->response($data,200);
-    	}else{
-    		$this->response(array('status'=>'fail',502));
-    	}
+        $this->form_validation->set_rules('nokk','Nomor KK','required');
+        if($this->input->post('nokk') == null){
+            $this->response(array('status'=>'fail',502));
+        }else{
+            $insert = $this->db->insert('warga',$data);
+            if ($insert) {
+                $this->response($data,200);
+            }else{
+                $this->response(array('status'=>'fail',502));
+            }
+        }
     }
 
     //Memperbarui data kontak yang telah ada
