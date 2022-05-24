@@ -7,13 +7,15 @@ class Warga extends REST_Controller {
 
     function __construct($config = 'rest') {
         parent::__construct($config);
-        // $this->load->database();
+        $this->load->database();
     }
 
     //Menampilkan data kontak
     function index_get() {
         $id = $this->get('id');
-        if ($id == '') {
+        $idx = $this->uri->segment(2);
+
+        if ($idx == '') {
             // $kontak = $this->db->get('warga')->result();
             // $kontak = $this->db->query("select * from warga")->result();
             $this->db->select('*');
@@ -26,8 +28,12 @@ class Warga extends REST_Controller {
             $this->db->join('tbl_klg', 'warga.statusklg = tbl_klg.id','left');
             $this->db->join('tbl_blok', 'warga.alamatblok = tbl_blok.id','left');
             $this->db->join('tbl_penghuni', 'warga.penghuni = tbl_penghuni.id','left');
-            // $this->db->where('warga.idk', $id);
             $kontak = $this->db->get()->result();
+            if($kontak){
+                $this->response(array('status'=>true,'result'=>$kontak), 200);
+            }else{
+                $this->response(array('status'=>false,'result'=>'Data tidak ditemukan'), 200);
+            }
         } else {
             $this->db->select('*');
             $this->db->select('warga.id');
@@ -39,11 +45,16 @@ class Warga extends REST_Controller {
             $this->db->join('tbl_klg', 'warga.statusklg = tbl_klg.id','left');
             $this->db->join('tbl_blok', 'warga.alamatblok = tbl_blok.id','left');
             $this->db->join('tbl_penghuni', 'warga.penghuni = tbl_penghuni.id','left');
-            $this->db->where('warga.id', $id);
+            $this->db->where('warga.id', $idx);
             $kontak = $this->db->get()->result();
+            if($kontak){
+                $this->response(array('status'=>true,'result'=>$kontak), 200);
+            }else{
+                $this->response(array('status'=>false,'result'=>'Data tidak ditemukan'), 200);
+            }
             // $kontak = $this->db->get()->result();
         }
-        $this->response(array('status'=>true,'result'=>$kontak), 200);
+        // $this->response(array('status'=>true,'result'=>$kontak), 200);
         // $this->response($kontak, REST_Controller::HTTP_OK);
     }
 
