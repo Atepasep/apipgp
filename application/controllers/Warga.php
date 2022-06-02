@@ -30,9 +30,9 @@ class Warga extends REST_Controller {
             $this->db->join('tbl_penghuni', 'warga.penghuni = tbl_penghuni.id','left');
             $kontak = $this->db->get()->result();
             if($kontak){
-                $this->response(array('status'=>true,'result'=>$kontak), 200);
+                $this->response(array('status'=>true,'data'=>$kontak), 200);
             }else{
-                $this->response(array('status'=>false,'result'=>'Data tidak ditemukan'), 200);
+                $this->response(array('status'=>false,'data'=>'Data tidak ditemukan'), 200);
             }
         } else {
             $this->db->select('*');
@@ -48,9 +48,9 @@ class Warga extends REST_Controller {
             $this->db->where('warga.id', $idx);
             $kontak = $this->db->get()->result();
             if($kontak){
-                $this->response(array('status'=>true,'result'=>$kontak), 200);
+                $this->response(array('status'=>true,'data'=>$kontak), 200);
             }else{
-                $this->response(array('status'=>false,'result'=>'Data tidak ditemukan'), 200);
+                $this->response(array('status'=>false,'data'=>'Data tidak ditemukan'), 200);
             }
             // $kontak = $this->db->get()->result();
         }
