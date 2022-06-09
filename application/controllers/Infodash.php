@@ -21,7 +21,7 @@ class Infodash extends REST_Controller {
                 $jmlwarga = $jmlwarga + $jml['jmlwarga'];
             }
             $jmlkk = $jmlx->num_rows();
-            $kontak = ['jmlwarga'=>$jmlwarga,'jmlkeluarga'=>$jmlkk];
+            $kontak[] = (object) array('jmlwarga'=>$jmlwarga,'jmlkk'=>$jmlkk);
             if($kontak){
                 $this->response(array('status'=>true,'data'=>$kontak), 200);
             }else{

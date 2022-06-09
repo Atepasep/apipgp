@@ -14,10 +14,9 @@ class Warga extends REST_Controller {
     function index_get() {
         $id = $this->get('id');
         $idx = $this->uri->segment(2);
+        $filter = $this->uri->segment(3);
 
         if ($idx == '') {
-            // $kontak = $this->db->get('warga')->result();
-            // $kontak = $this->db->query("select * from warga")->result();
             $this->db->select('*');
             $this->db->select('warga.id');
             $this->db->from('warga');
@@ -45,7 +44,11 @@ class Warga extends REST_Controller {
             $this->db->join('tbl_klg', 'warga.statusklg = tbl_klg.id','left');
             $this->db->join('tbl_blok', 'warga.alamatblok = tbl_blok.id','left');
             $this->db->join('tbl_penghuni', 'warga.penghuni = tbl_penghuni.id','left');
-            $this->db->where('warga.id', $idx);
+            if($idx == 'filter'){
+                $this->db->like('warga.nama', $filter);
+            }else{
+                $this->db->where('warga.id', $idx);
+            }
             $kontak = $this->db->get()->result();
             if($kontak){
                 $this->response(array('status'=>true,'data'=>$kontak), 200);
@@ -54,8 +57,6 @@ class Warga extends REST_Controller {
             }
             // $kontak = $this->db->get()->result();
         }
-        // $this->response(array('status'=>true,'result'=>$kontak), 200);
-        // $this->response($kontak, REST_Controller::HTTP_OK);
     }
 
     //Menigirm atau menambah data kontak baru
@@ -79,7 +80,8 @@ class Warga extends REST_Controller {
             'penghuni' => $this->input->post('penghuni'),
         );
         $this->form_validation->set_rules('nokk','Nomor KK','required');
-        if($this->input->post('nokk') == null){
+        $this->form_validation->set_rules('nik','Nomor NIK','required');
+        if($this->input->post('nokk') == null || $this->input->post('nik') == null){
             $this->response(array('status'=>'fail',502));
         }else{
             $insert = $this->db->insert('warga',$data);
@@ -94,23 +96,24 @@ class Warga extends REST_Controller {
     //Memperbarui data kontak yang telah ada
     function index_put() {
         $id = $this->put('id');
+        // $id = $this->input->post('id');
         $data = array(
-            'nokk' => $this->input->post('nokk'),
-            'nik' => $this->input->post('nik'),
-            'nama' => $this->input->post('nama'),
-            'tmplahir' => $this->input->post('tmplahir'),
-            'tgllahir' => $this->input->post('tgllahir'),
-            'jenkel' => $this->input->post('jenkel'),
-            'statusnikah' => $this->input->post('statusnikah'),
-            'agama' => $this->input->post('agama'),
-            'pendidikan' => $this->input->post('pendidikan'),
-            'warganegara' => $this->input->post('warganegara'),
-            'statusklg' => $this->input->post('statusklg'),
-            'alamatblok' => $this->input->post('alamatblok'),
-            'alamatno' => $this->input->post('alamatno'),
-            'alamatket' => $this->input->post('alamatket'),
-            'ket' => $this->input->post('ket'),
-            'penghuni' => $this->input->post('penghuni'),
+            'nokk' => $this->put('nokk'),
+            'nik' => $this->put('nik'),
+            'nama' => $this->put('nama'),
+            'tmplahir' => $this->put('tmplahir'),
+            'tgllahir' => $this->put('tgllahir'),
+            'jenkel' => $this->put('jenkel'),
+            'statusnikah' => $this->put('statusnikah'),
+            'agama' => $this->put('agama'),
+            'pendidikan' => $this->put('pendidikan'),
+            'warganegara' => $this->put('warganegara'),
+            'statusklg' => $this->put('statusklg'),
+            'alamatblok' => $this->put('alamatblok'),
+            'alamatno' => $this->put('alamatno'),
+            'alamatket' => $this->put('alamatket'),
+            'ket' => $this->put('ket'),
+            'penghuni' => $this->put('penghuni'),
         );
         $this->db->where('id', $id);
         $update = $this->db->update('warga', $data);
